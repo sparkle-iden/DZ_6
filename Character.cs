@@ -20,33 +20,42 @@ namespace Lesson5
 
         public void AddEffect(Effect effect)
         { 
+            int freeSlot = -1;
             for (int i = 0; i < 3; i++)
             {
+
                 if (CastList[i] == null)
                 {
-                    CastList[i] = effect;
+                    freeSlot = i;
                     break;
                 }
-                else
-                {
-                    Console.WriteLine("Нет места(");
-                }
+            }
+            if (freeSlot == -1)
+            {
+                Console.WriteLine("Нет свободных слотов для эффекта!");
+            }
+            if (freeSlot != -1)
+            {
+                CastList[freeSlot] = effect;
+                effect.Start(this);
             }
         }
         public void UpdateEffect()
         {
-            int freeIndex = -1;
             for (int i = 0; i < CastList.Length; i++)
             {
-                if (CastList[i] != null)
+                if (CastList[i] != null&& CastList[i].Turns != 0 )
                 {
                     CastList[i].EachTurn(this);
-                    if (CastList[i].Turns == 0)
+
+                    Console.WriteLine($"Эффект {CastList[i].Name} действует еще {CastList[i].Turns} ходов");
+                    if(CastList[i].Turns == 0)
                     {
+                        CastList[i].EndEffect();
                         CastList[i] = null;
                     }
                 }
-                break;
+               
             }
         }
 

@@ -8,7 +8,7 @@ namespace Lesson5
 {
     class Mage : Character
     {
-        Spell[] Spelist = new Spell[]
+        public Spell[] Spelist = new Spell[]
         {
             new Fireball(),
             new HealUp(),
@@ -22,9 +22,16 @@ namespace Lesson5
 
         public void CastSpell(int spellIndex, Character target)
         {
-            if (spellIndex >= 0 && spellIndex < Spelist.Length)
+            if (spellIndex >= 0 && spellIndex < Spelist.Length && Spelist[spellIndex].CurrentCooldown == 0)
             {
+                Console.Clear();
+                Console.SetCursorPosition(0, 4);
+                Console.WriteLine($"{Name} использует {Spelist[spellIndex].Name}!");
                 Spelist[spellIndex].Cast(target);
+            }
+            else
+            {
+                Console.WriteLine("Заклинание не готово или неверный индекс!");
             }
         }
 
@@ -33,7 +40,10 @@ namespace Lesson5
             Console.WriteLine("\nДоступные заклинания:");
             for (int i = 0; i < Spelist.Length; i++)
             {
-                Console.WriteLine($"{i + 1}. {Spelist[i].Name} - {Spelist[i].Description}");
+                if (Spelist[i].CanCast())
+                    Console.WriteLine($"{i + 1}. {Spelist[i].Name} - {Spelist[i].Description} (Готово)");
+                else
+                    Console.WriteLine($"{i + 1}. {Spelist[i].Name} - {Spelist[i].Description}");
             }
         }
     }

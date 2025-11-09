@@ -40,17 +40,16 @@ namespace Lesson5
         {
             Name = "Огненный шар";
             Description = "Наносит урон и может поджечь";
-            Cooldown = 2;
+            Cooldown = 5;
         }
 
         public override void Cast(Character target)
         {
-            Console.WriteLine("Огненный шар!");
             target.ApplyDamage(12);
             StartCooldown();
 
             Random random = new Random();
-            if (random.Next(0, 2) == 1)
+            if (random.Next(1, 1) == 1)
             {
                 target.AddEffect(new Burning(target));
                

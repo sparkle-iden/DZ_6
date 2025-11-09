@@ -21,20 +21,18 @@ namespace Lesson5
 
         public abstract void Start(Character target);
         public abstract void EachTurn(Character target);
-        public abstract void EndEffect(Character target);
+        public abstract void EndEffect();
     }
 
     class Burning : Effect
     {
-        public Burning(Character target) : base("Горение", 3)
+        public Burning(Character target) : base("Горение", 10)
         {
             Start(target);
         }
 
         public override void Start(Character target)
         {
-
-
             Console.WriteLine($"{target.Name} горит!");
         }
 
@@ -42,11 +40,12 @@ namespace Lesson5
         {
             target.ApplyDamage(3);
             Console.WriteLine($"{target.Name} получает 3 урона от огня");
+            Turns--;
         }
 
-        public override void EndEffect(Character target)
+        public override void EndEffect()
         {
-            Console.WriteLine($"{target.Name} перестал гореть");
+            Console.WriteLine("Потух");
         }
     }
 
@@ -66,9 +65,9 @@ namespace Lesson5
             Console.WriteLine($"{target.Name} под защитой щита. Осталось ходов: {Turns}");
             Turns--; 
         }
-        public override void EndEffect(Character target)
+        public override void EndEffect()
         {
-            Console.WriteLine($"{target.Name} теряет защиту");
+            Console.WriteLine("Эффект щита кончился");
             
         }
     }
