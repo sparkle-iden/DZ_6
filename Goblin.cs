@@ -8,7 +8,7 @@ namespace Lesson5
 {
     internal class Goblin : Character
     {
-        public Goblin() : base("Григорий", 5000, 1) 
+        public Goblin() : base("Искра", 5000, 1) 
         {
         }
         public int Attack()
