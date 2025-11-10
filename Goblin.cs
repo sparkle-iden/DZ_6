@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lesson5
+namespace Dz_5
 {
     internal class Goblin : Character
     {
-        public Goblin() : base("Искра", 5000, 1) 
+        public Goblin(string name) : base( name, 100, 1, 100) 
         {
         }
+
+        public override void ApplyDamage(int damage)
+        {
+            base.ApplyDamage(damage);
+        }
+
         public int Attack()
         {
             Random random = new Random();

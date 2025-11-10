@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lesson5
+
+namespace Dz_5
 {
     class Mage : Character
     {
         public Spell[] Spelist = new Spell[]
         {
             new Fireball(),
-            new HealUp(),
+            new Healing(),
             new Shield()
         };
 
-        public Mage(string name) : base(name, 8000, 0)
+        public Mage(string name) : base(name, 8000, 0, 60)
         {
 
         }
