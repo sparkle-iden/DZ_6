@@ -6,8 +6,8 @@ namespace Dz_5
     {
         public Fireball()
         {
-            Name = "Огненный шар";
-            Description = "Наносит урон и может поджечь";
+            Name = "EXPLOSION";
+            Description = "Дезинтеграция цели";
             Cooldown = 5;
         }
 

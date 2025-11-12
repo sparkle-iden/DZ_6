@@ -12,7 +12,7 @@ namespace Dz_5
         protected int TempArmor;
 
         private Effect[] CastList = new Effect[3];
-
+       
         public string Name
         {
             get { return name; }

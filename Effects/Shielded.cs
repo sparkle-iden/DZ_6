@@ -8,21 +8,28 @@ namespace Dz_5.Effects
         public Shielded(Character target) : base("Щит", 3) {
             Start(target);
         }
-        int armorBonus = 5;
+        int armorBonus = 15;
         
       
         public override void Start(Character target)
         {
             Console.WriteLine($"{target.Name} защищен! Броня увеличена.");
             BattelTime.TotalCast.Add(this);
+            target.tempArmor += armorBonus;
         }
 
         public override void EachTurn(Character target)
         {
-            target.tempArmor += armorBonus;
-            
-            Console.WriteLine($"{target.Name} под щитом. Осталось ходов: {Turns}");
-            Turns--;
+            if (target.tempArmor != 0)
+            {
+                Turns--;
+            }
+            else
+            {
+                EndEffect();
+                Console.WriteLine($"{target.Name} потерял щит. Броня уменьшена.");
+                BattelTime.TotalCast.Remove(this);
+            }
         }
         public override void EndEffect()
         {

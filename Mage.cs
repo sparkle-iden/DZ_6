@@ -5,7 +5,7 @@ namespace Dz_5
 {
     class Mage : Character
     {
-        public Spell[] Spelist = new Spell[]
+        public readonly Spell[] Spelist = new Spell[]
         {
             new Fireball(),
             new Healing(),
