@@ -1,5 +1,6 @@
 ﻿using System;
 using Dz_5.Effects;
+
 namespace Dz_5
 {
     internal abstract class Character
@@ -7,12 +8,23 @@ namespace Dz_5
         protected string name;
         protected int HealUp;
         protected int HealMax;
+        protected int Energy;
+        protected int EnergyMax;
+        protected int Gold;
         protected bool IsDead = false;
         protected int armor;
         protected int TempArmor;
 
         private Effect[] CastList = new Effect[3];
+
+      
+        protected Weapon EquippedWeapon;
+        protected Armor EquippedArmor;
+        protected Item EquippedRing;
+
        
+        public Inventory Inventory { get; private set; }
+
         public string Name
         {
             get { return name; }
@@ -29,7 +41,7 @@ namespace Dz_5
 
         public int Armor
         {
-            get { return armor; }
+            get { return armor + TempArmor + (EquippedArmor != null ? EquippedArmor.ArmorValue : 0); }
         }
         public int tempArmor
         {
@@ -44,6 +56,115 @@ namespace Dz_5
             armor = Armor;
             HealMax = healMax;
 
+            
+            EnergyMax = 100;
+            Energy = EnergyMax;
+            Gold = 0;
+
+            Inventory = new Inventory(20);
+        }
+
+     
+        public void AddHealth(int value)
+        {
+            if (IsDead) return;
+            int old = HealUp;
+            HealUp = Math.Max(0, Math.Min(HealMax, HealUp + value));
+            int actual = HealUp - old;
+            if (actual > 0)
+            {
+                BattelTime.TotalHeal += actual;
+            }
+            if (HealUp <= 0)
+            {
+                IsDead = true;
+                Console.WriteLine($"Персонаж {name} умер! (");
+            }
+        }
+
+        public void AddEnergy(int value)
+        {
+            Energy = Math.Max(0, Math.Min(EnergyMax, Energy + value));
+        }
+
+        public void AddGold(int value)
+        {
+            if (value < 0)
+            {
+            
+                Gold = Math.Max(0, Gold + value);
+            }
+            else
+            {
+                Gold += value;
+            }
+        }
+
+        public void EquipWeapon(Weapon weapon)
+        {
+            if (weapon == null) return;
+            if (EquippedWeapon != null)
+            {
+               
+                Inventory.Add(EquippedWeapon);
+            }
+            EquippedWeapon = weapon;
+            Console.WriteLine($"{name} экипировал оружие: {weapon.Name}");
+        }
+
+        public void EquipArmor(Armor arm)
+        {
+            if (arm == null) return;
+            if (EquippedArmor != null)
+            {
+                Inventory.Add(EquippedArmor);
+            }
+            EquippedArmor = arm;
+            Console.WriteLine($"{name} экипировал броню: {arm.Name}");
+        }
+
+        public void EquipRing(Item ring)
+        {
+            if (ring == null) return;
+            if (EquippedRing != null)
+            {
+                Inventory.Add(EquippedRing);
+            }
+            EquippedRing = ring;
+            Console.WriteLine($"{name} надел кольцо: {ring.Name}");
+        }
+
+        public void UnequipWeapon()
+        {
+            if (EquippedWeapon != null)
+            {
+                Inventory.Add(EquippedWeapon);
+                Console.WriteLine($"{name} снял оружие: {EquippedWeapon.Name}");
+                EquippedWeapon = null;
+            }
+            else Console.WriteLine("Оборудованного оружия нет");
+        }
+
+        public void UnequipArmor()
+        {
+            if (EquippedArmor != null)
+            {
+                Inventory.Add(EquippedArmor);
+                Console.WriteLine($"{name} снял броню: {EquippedArmor.Name}");
+                EquippedArmor = null;
+            }
+            else Console.WriteLine("Надетой брони нет");
+        }
+
+        public void UnequipRing()
+        {
+            if (EquippedRing != null)
+            {
+                Inventory.Add(EquippedRing);
+                Console.WriteLine($"{name} снял кольцо: {EquippedRing.Name}");
+                EquippedRing = null;
+            }
+            else Console.WriteLine("Кольца нет");
         }
 
 
@@ -51,24 +172,24 @@ namespace Dz_5
         {
             if (!IsDead)
             {
-                int remainingDamage= damage;
-                if (TempArmor > 0&&remainingDamage>0)
+                int remainingDamage = damage;
+                if (TempArmor > 0 && remainingDamage > 0)
                 {
-                   int absorbedByTempArmor = Math.Min(TempArmor, remainingDamage);
-                   TempArmor -= absorbedByTempArmor;
-                   remainingDamage -= absorbedByTempArmor;
+                    int absorbedByTempArmor = Math.Min(TempArmor, remainingDamage);
+                    TempArmor -= absorbedByTempArmor;
+                    remainingDamage -= absorbedByTempArmor;
                     Console.WriteLine($"Персонаж {name} временная броня поглотила {absorbedByTempArmor} урона. Осталось временной брони: {TempArmor}");
-
                 }
                 if (remainingDamage > 0)
                 {
-                    int actualDamage = remainingDamage - armor;
+                    int totalArmor = armor + (EquippedArmor != null ? EquippedArmor.ArmorValue : 0);
+                    int actualDamage = remainingDamage - totalArmor;
                     if (actualDamage < 0)
                     {
                         actualDamage = 0;
                     }
                     HealUp -= actualDamage;
-                    Console.WriteLine($"Персонаж {name} получил {actualDamage} урона (броня поглотила {armor})! Здоровье: {HealUp}");
+                    Console.WriteLine($"Персонаж {name} получил {actualDamage} урона (броня поглотила {totalArmor})! Здоровье: {HealUp}");
 
                     if (HealUp <= 0)
                     {
@@ -81,12 +202,9 @@ namespace Dz_5
 
         public void Healing()
         {
-            int heals = 15;
-            BattelTime.TotalHeal += heals;
-            if (!IsDead)
-            {
-                HealUp += heals;
-            }
+          
+            AddHealth(15);
+            Console.WriteLine($"{name} восстановил 15 здоровья");
         }
 
         public void AddEffect(Effect effect)
@@ -122,8 +240,8 @@ namespace Dz_5
                     if (CastList[i].Turns == 0)
                     {
                         CastList[i].EndEffect();
-                        
-                        
+
+
                         CastList[i] = null;
                     }
                     else
@@ -133,6 +251,17 @@ namespace Dz_5
                 }
 
             }
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя: {name}");
+            Console.WriteLine($"Здоровье: {HealUp}/{HealMax}");
+            Console.WriteLine($"Энергия: {Energy}/{EnergyMax}");
+            Console.WriteLine($"Золото: {Gold}");
+            Console.WriteLine($"Оружие: {(EquippedWeapon != null ? EquippedWeapon.Name : "Нет")}");
+            Console.WriteLine($"Броня: {(EquippedArmor != null ? EquippedArmor.Name : "Нет")}");
+            Console.WriteLine($"Кольцо: {(EquippedRing != null ? EquippedRing.Name : "Нет")}");
         }
     }
 }

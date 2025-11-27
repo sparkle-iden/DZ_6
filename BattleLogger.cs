@@ -13,7 +13,7 @@ namespace Dz_5
 
         public static void Start(string filePath)
         {
-            if (_originalOut != null) return; // уже запущен
+            if (_originalOut != null) return; 
 
             _originalOut = Console.Out;
             _fileWriter = new StreamWriter(filePath, false, Encoding.UTF8) { AutoFlush = true };
